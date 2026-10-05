@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+:root {
+    font-family: GaretRegular, system-ui, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    background-color: #e9e8e8;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@theme {
+    --color-iieg-primary: #5C2472;
+    --color-iieg-primary-hover: #703288;
+    --color-iieg-primary-soft: #FAF5FC;
+    --color-iieg-primary-light: #F0E2F5;
+    --color-iieg-text: #191919;
+    --color-iieg-text-dim: #465055;
+    --color-iieg-text-muted: #7C7C7C;
+    --color-iieg-bg: #F8F8F8;
+    --color-iieg-border: #E2E2E2;
+    --color-iieg-warn: #FF8300;
+    --color-iieg-warn-bg: #FFE9CC;
+    --color-iieg-warn-text: #9E5200;
+
+    --font-garetbold: "GaretBold", "sans-serif";
+    --font-garetmedium: "GaretMedium", "sans-serif";
+    --font-garetregular: "GaretRegular", "sans-serif";
+}
+
+@font-face {
+    font-family: GaretBold;
+    src: url('/fonts/Garet-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: GaretMedium;
+    src: url('/fonts/Garet-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: GaretRegular;
+    src: url('/fonts/Garet-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
