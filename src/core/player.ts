@@ -13,6 +13,7 @@ export interface AvatarPlayer {
     clip(): ClipName;
     time(): number;
     play(clip: ClipName, fade?: number): void;
+    setTimeScale(scale: number): void;
     update(delta: number): void;
     dispose(): void;
 }
@@ -38,6 +39,9 @@ export const createAvatarPlayer = (definition: unknown, { clip = IDLE_CLIP, time
             actions[next].reset().play();
             previous.crossFadeTo(actions[next], fade, false);
             current = next;
+        },
+        setTimeScale(scale) {
+            mixer.timeScale = scale;
         },
         update(delta) {
             mixer.update(delta);

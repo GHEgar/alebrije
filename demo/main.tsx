@@ -12,7 +12,7 @@ function App() {
     return (
         <div className="app">
             <header className="header">
-                <h1>alebrije</h1>
+                <h1>alebrije <a className="link" href="./mapa.html">mapa</a></h1>
                 <ActionBar avatar={avatar} onRandom={() => setAvatar(randomAvatar())} onImport={setAvatar} />
             </header>
             <main className="main">

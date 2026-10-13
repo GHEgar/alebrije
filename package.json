@@ -1,7 +1,7 @@
 {
     "name": "alebrije",
-    "version": "0.2.1",
-    "description": "Headless low-poly avatar builder for three.js: parametric humanoid with skeleton, walk and idle clips, and glTF export.",
+    "version": "0.3.0",
+    "description": "Headless low-poly avatar builder for three.js: parametric humanoid with skeleton, walk and idle clips, glTF export, MapLibre layer and GeoServer sources (WFS, WCS, WMS).",
     "license": "AGPL-3.0-only",
     "author": "Edgar Villarreal",
     "type": "module",
@@ -20,6 +20,18 @@
         "./react": {
             "types": "./dist/react/index.d.ts",
             "import": "./dist/react/index.js"
+        },
+        "./geo": {
+            "types": "./dist/geo/index.d.ts",
+            "import": "./dist/geo/index.js"
+        },
+        "./geoserver": {
+            "types": "./dist/geoserver/index.d.ts",
+            "import": "./dist/geoserver/index.js"
+        },
+        "./maplibre": {
+            "types": "./dist/maplibre/index.d.ts",
+            "import": "./dist/maplibre/index.js"
         }
     },
     "scripts": {
@@ -53,6 +65,7 @@
         "eslint": "^10.12.0",
         "eslint-plugin-react-hooks": "^7.1.1",
         "happy-dom": "^20.14.6",
+        "maplibre-gl": "^6.10.0",
         "react": "^19.3.0",
         "react-dom": "^19.3.0",
         "three": "^0.186.1",

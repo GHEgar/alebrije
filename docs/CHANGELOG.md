@@ -7,6 +7,22 @@ apega a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [No publicado]
 
+## [0.3.0] - 2026-10-13
+
+### Agregado
+
+- `alebrije/maplibre`: `createAvatarLayer`, capa custom de three.js para MapLibre (v4 y v5+, sin
+  importar su paquete) con `setAvatars`, `scene`, `frame`, `smoothing` para interpolar entre
+  actualizaciones y `scale` para exagerar el tamaño; `createAvatarSet` para otros motores.
+- `alebrije/geo`: distancia, rumbo y destino geodésicos, Mercator con la cuenta de MapLibre, marco local
+  este-norte-arriba en metros (`createLocalFrame`) y el tipo `AvatarState`.
+- `alebrije/geoserver`: `fetchFeatures` y `buildGetFeatureUrl` para WFS 1.1.0 y 2.0.0 en GeoJSON lon/lat
+  con `cql`, `bbox` y `count`, `WfsError` con el texto de la excepción OGC, y `avatarsFromFeatures`:
+  posición, altura, rumbo, clip y definición (objeto o JSON en texto) por atributo o función.
+- `setTimeScale` en el reproductor.
+- Demo `mapa.html` con un GeoServer de mentira dentro de Vite: personas de una capa WFS caminando sobre
+  OpenStreetMap.
+
 ## [0.2.1] - 2026-10-13
 
 ### Cambiado

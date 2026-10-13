@@ -20,6 +20,15 @@
             "alebrije/react": [
                 "./src/react/index.ts"
             ],
+            "alebrije/geo": [
+                "./src/geo/index.ts"
+            ],
+            "alebrije/geoserver": [
+                "./src/geoserver/index.ts"
+            ],
+            "alebrije/maplibre": [
+                "./src/maplibre/index.ts"
+            ],
             "alebrije": [
                 "./src/core/index.ts"
             ]

@@ -52,13 +52,38 @@ Adds the avatar to `scene`, rebuilds it when the definition changes (keeping the
 cross-fades on clip change and removes it on unmount. Call `player.current?.update(delta)` from your
 render loop.
 
+## GeoServer and MapLibre
+
+```ts
+import { createAvatarLayer } from 'alebrije/maplibre';
+import { avatarsFromFeatures, fetchFeatures } from 'alebrije/geoserver';
+
+const layer = createAvatarLayer({ id: 'avatars', smoothing: 0.3 });
+map.addLayer(layer);
+
+const people = await fetchFeatures({ url: '/geoserver/ows', typeName: 'ws:people' });
+layer.setAvatars(avatarsFromFeatures(people, { definition: 'avatar', heading: 'heading', clip: 'state' }));
+```
+
+The layer is a MapLibre custom layer (v4 and v5+) that never imports `maplibre-gl`. It places each
+`AvatarState` — `position` (lon, lat), `altitude` in metres, `heading` in degrees clockwise from north,
+`clip` — in a local east-north-up frame around a fixed origin, which is accurate for areas of a few tens
+of kilometres. Avatars whose definition did not change are moved, not rebuilt.
+
+| Entry | Exports |
+|---|---|
+| `alebrije/geo` | `distance`, `bearing`, `destination`, `toMercator`, `meterScale`, `createLocalFrame`, `AvatarState` |
+| `alebrije/geoserver` | `fetchFeatures`, `buildGetFeatureUrl`, `WfsError`, `avatarsFromFeatures` |
+| `alebrije/maplibre` | `createAvatarLayer`, `createAvatarSet` |
+
 ## Demo
 
 ```bash
 npm run demo
 ```
 
-A full avatar editor with orbit preview and `.glb` download.
+A full avatar editor with orbit preview and `.glb` download, and `mapa.html`: the GeoServer variants on
+MapLibre against a fake GeoServer served by Vite.
 
 ## License
 
