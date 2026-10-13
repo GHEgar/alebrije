@@ -7,6 +7,13 @@ apega a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [No publicado]
 
+## [0.2.1] - 2026-10-13
+
+### Cambiado
+
+- La validación usa `zod/mini`: el núcleo pesa unos 70 KB menos minificado en el bundle del consumidor, con el
+  mismo comportamiento de `parseAvatar`.
+
 ## [0.2.0] - 2026-10-13
 
 ### Agregado
