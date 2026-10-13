@@ -7,6 +7,23 @@ apega a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [No publicado]
 
+## [0.5.0] - 2026-10-13
+
+### Agregado
+
+- Rutas en `alebrije/geo`: `createRoute` (longitud geodésica acumulada, `at(distancia)` y
+  `atTime(segundos)` con tiempos por vértice, altura de la z del vértice, rumbo que se conserva en las
+  pausas) y `createRoutePlayer` (velocidad constante o tiempos, bucle, `seek`, suelo opcional y
+  `timeScale` del clip según la velocidad para que los pies no patinen).
+- `routesFromFeatures` y `parseTimes` en `alebrije/geoserver`: `LineString` y `MultiLineString` con
+  definición, velocidad y tiempos (segundos, texto o ISO 8601) por atributo.
+- Demo: rutas de una capa WFS recorridas en bucle y dibujadas como línea de MapLibre.
+
+### Corregido
+
+- Demo del mapa: el worker de MapLibre 6 se registra con `setWorkerUrl`; sin él las fuentes GeoJSON
+  nunca terminaban de cargar.
+
 ## [0.4.0] - 2026-10-13
 
 ### Agregado

@@ -8,3 +8,5 @@ export { buildGetCoverageUrl, createWcsProvider } from './wcs.js';
 export type { WcsOptions } from './wcs.js';
 export { RGB_DECODERS, buildGetMapUrl, createWmsProvider, decodeImage } from './wms.js';
 export type { RgbaDecoder, WmsElevationFormat, WmsOptions } from './wms.js';
+export { parseTimes, routesFromFeatures } from './routes.js';
+export type { FeatureRoute, RouteFeatureOptions } from './routes.js';

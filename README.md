@@ -90,10 +90,29 @@ the coverage is projected; pass `decode` to use geotiff.js for compressed output
 reads raw BIL16/BIL32 from the GeoServer DDS/BIL extension or terrain-RGB PNGs; a styled WMS image has
 no heights. Both implement the same `ElevationProvider` interface as teodolito.
 
+### Animated routes
+
+```ts
+import { createRoutePlayer } from 'alebrije/geo';
+import { fetchFeatures, routesFromFeatures } from 'alebrije/geoserver';
+
+const routes = routesFromFeatures(await fetchFeatures({ url, typeName: 'ws:routes' }), {
+    definition: 'avatar', speed: 'speed', times: 'times',
+});
+const players = routes.map(({ route, speed }) => createRoutePlayer(route, { loop: true, speed }));
+layer.setAvatars(players.map((player, i) => {
+    player.advance(delta);
+    return player.avatar(routes[i].id, routes[i].definition);
+}));
+```
+
+Routes walk at a constant speed over the geodesic length, or follow per-vertex times (seconds or ISO
+8601) when the attribute matches the vertices. The `walk` clip is time-scaled to the speed.
+
 | Entry | Exports |
 |---|---|
-| `alebrije/geo` | `distance`, `bearing`, `destination`, `toMercator`, `createLocalFrame`, `sampleGrid`, `createGridProvider`, `createGround`, `createWalker` |
-| `alebrije/geoserver` | `fetchFeatures`, `avatarsFromFeatures`, `createWcsProvider`, `createWmsProvider`, `decodeGeoTiff`, `OgcError` |
+| `alebrije/geo` | `distance`, `bearing`, `destination`, `toMercator`, `createLocalFrame`, `sampleGrid`, `createGridProvider`, `createGround`, `createWalker`, `createRoute`, `createRoutePlayer` |
+| `alebrije/geoserver` | `fetchFeatures`, `avatarsFromFeatures`, `createWcsProvider`, `createWmsProvider`, `decodeGeoTiff`, `routesFromFeatures`, `OgcError` |
 | `alebrije/maplibre` | `createAvatarLayer`, `createAvatarSet` |
 
 ## Demo

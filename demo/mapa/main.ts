@@ -1,11 +1,15 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { Map as MapLibreMap } from 'maplibre-gl';
+import { Map as MapLibreMap, setWorkerUrl } from 'maplibre-gl';
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { createAvatarLayer, type AvatarLayer } from 'alebrije/maplibre';
 import type { Mode } from './mode';
 import { caminarWcs, caminarWms } from './caminar';
 import { personas } from './personas';
+import { rutas } from './rutas';
 
-const MODES: Mode[] = [personas, caminarWcs, caminarWms];
+const MODES: Mode[] = [personas, caminarWcs, caminarWms, rutas];
+
+setWorkerUrl(workerUrl);
 
 const map = new MapLibreMap({
     container: 'map',

@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Plugin } from 'vite';
 import { personasCollection } from './personas.js';
+import { rutasCollection } from './rutas.js';
 import { wcs, wmsBil } from './terreno.js';
 
 export interface Query {
@@ -26,6 +27,10 @@ const wfs: Handler = (query, res) => {
     const type = query('typeNames') ?? query('typeName');
     if (type === 'demo:personas') {
         sendJson(res, personasCollection(Date.now()));
+        return true;
+    }
+    if (type === 'demo:rutas') {
+        sendJson(res, rutasCollection());
         return true;
     }
     exception(res, `Unknown type ${type ?? ''}`);

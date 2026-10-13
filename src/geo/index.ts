@@ -13,3 +13,5 @@ export { createGround } from './ground.js';
 export type { Ground, GroundOptions } from './ground.js';
 export { WALK_STRIDE, createWalker } from './walker.js';
 export type { WalkInput, Walker, WalkerOptions, WalkerState } from './walker.js';
+export { createRoute, createRoutePlayer } from './route.js';
+export type { Coordinate, Route, RouteOptions, RoutePlayer, RoutePlayerOptions, RoutePoint, RouteState } from './route.js';
