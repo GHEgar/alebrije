@@ -7,7 +7,8 @@ const REFRESH = 1000;
 export const personas: Mode = {
     title: 'Personas (WFS)',
     hint: 'Cada punto de la capa demo:personas es un avatar con su definición, rumbo y estado.',
-    start({ layer, map, status }) {
+    start({ createLayer, map, status }) {
+        const layer = createLayer({ origin: [-103.3496, 20.6767], smoothing: 0.35 });
         let alive = true;
         const controller = new AbortController();
         const load = async (): Promise<void> => {
@@ -29,7 +30,6 @@ export const personas: Mode = {
             alive = false;
             controller.abort();
             clearInterval(timer);
-            layer.setAvatars([]);
         };
     },
 };

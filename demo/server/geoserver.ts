@@ -1,8 +1,12 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Plugin } from 'vite';
 import { personasCollection } from './personas.js';
+import { wcs, wmsBil } from './terreno.js';
 
-export type Query = (name: string) => string | null;
+export interface Query {
+    (name: string): string | null;
+    all(name: string): string[];
+}
 
 export type Handler = (query: Query, res: ServerResponse) => boolean;
 
@@ -28,16 +32,14 @@ const wfs: Handler = (query, res) => {
     return true;
 };
 
-const handlers: Record<string, Handler[]> = { WFS: [wfs] };
-
-export const registerHandler = (service: string, handler: Handler): void => {
-    handlers[service] = [...(handlers[service] ?? []), handler];
-};
+const handlers: Record<string, Handler[]> = { WFS: [wfs], WCS: [wcs], WMS: [wmsBil] };
 
 const handle = (req: IncomingMessage, res: ServerResponse, next: () => void): void => {
     const params = new URL(req.url ?? '/', 'http://demo').searchParams;
     const lower = new Map([...params.entries()].map(([key, value]) => [key.toLowerCase(), value]));
-    const query: Query = (name) => lower.get(name.toLowerCase()) ?? null;
+    const query = Object.assign((name: string) => lower.get(name.toLowerCase()) ?? null, {
+        all: (name: string) => [...params.entries()].filter(([key]) => key.toLowerCase() === name.toLowerCase()).map(([, value]) => value),
+    });
     const service = (query('service') ?? '').toUpperCase();
     const served = (handlers[service] ?? []).some((handler) => handler(query, res));
     if (!served) next();

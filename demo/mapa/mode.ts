@@ -1,9 +1,9 @@
 import type { Map as MapLibreMap } from 'maplibre-gl';
-import type { AvatarLayer } from 'alebrije/maplibre';
+import type { AvatarLayer, AvatarLayerOptions } from 'alebrije/maplibre';
 
 export interface ModeContext {
     map: MapLibreMap;
-    layer: AvatarLayer;
+    createLayer: (options: Omit<AvatarLayerOptions, 'id'>) => AvatarLayer;
     status: (text: string) => void;
 }
 

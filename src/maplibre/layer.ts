@@ -17,6 +17,7 @@ export type RenderArgs = ArrayLike<number> | { defaultProjectionData: { mainMatr
 export interface AvatarLayerOptions {
     id: string;
     origin?: LonLat;
+    baseAltitude?: number;
     lights?: boolean;
     smoothing?: number;
     scale?: number;
@@ -63,7 +64,7 @@ export const createAvatarLayer = (options: AvatarLayerOptions): AvatarLayer => {
     scene.add(avatars.group);
     const camera = new Camera();
     const now = options.now ?? (() => performance.now());
-    let frame: LocalFrame | null = options.origin ? createLocalFrame(options.origin) : null;
+    let frame: LocalFrame | null = options.origin ? createLocalFrame(options.origin, options.baseAltitude) : null;
     let map: MapLike | null = null;
     let renderer: WebGLRenderer | null = null;
     let previous: number | null = null;
@@ -98,7 +99,7 @@ export const createAvatarLayer = (options: AvatarLayerOptions): AvatarLayer => {
         },
         setAvatars(states) {
             const first = states[0];
-            if (!frame && first) frame = createLocalFrame(first.position);
+            if (!frame && first) frame = createLocalFrame(first.position, options.baseAltitude);
             if (frame) avatars.set(states, frame);
             map?.triggerRepaint();
         },

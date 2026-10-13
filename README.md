@@ -70,10 +70,30 @@ The layer is a MapLibre custom layer (v4 and v5+) that never imports `maplibre-g
 `clip` — in a local east-north-up frame around a fixed origin, which is accurate for areas of a few tens
 of kilometres. Avatars whose definition did not change are moved, not rebuilt.
 
+### Walking on a DEM
+
+```ts
+import { createGround, createWalker } from 'alebrije/geo';
+import { createWcsProvider } from 'alebrije/geoserver';
+
+const dem = createWcsProvider({ url: '/geoserver/ows', coverageId: 'ws__dem', resolution: 3 });
+const ground = createGround(dem, { radius: 160, spacing: 3 });
+const walker = createWalker({ position: [-103.39, 20.70], ground });
+const layer = createAvatarLayer({ id: 'me', origin: [-103.39, 20.70], baseAltitude: 1560 });
+
+walker.step(delta, { forward: 1, turn: 0, run: false });
+layer.setAvatars([walker.avatar('me', definition)]);
+```
+
+`createWcsProvider` asks WCS 2.0.1 for an uncompressed GeoTIFF (`axisLabels` and `subsettingCrs` when
+the coverage is projected; pass `decode` to use geotiff.js for compressed output). `createWmsProvider`
+reads raw BIL16/BIL32 from the GeoServer DDS/BIL extension or terrain-RGB PNGs; a styled WMS image has
+no heights. Both implement the same `ElevationProvider` interface as teodolito.
+
 | Entry | Exports |
 |---|---|
-| `alebrije/geo` | `distance`, `bearing`, `destination`, `toMercator`, `meterScale`, `createLocalFrame`, `AvatarState` |
-| `alebrije/geoserver` | `fetchFeatures`, `buildGetFeatureUrl`, `WfsError`, `avatarsFromFeatures` |
+| `alebrije/geo` | `distance`, `bearing`, `destination`, `toMercator`, `createLocalFrame`, `sampleGrid`, `createGridProvider`, `createGround`, `createWalker` |
+| `alebrije/geoserver` | `fetchFeatures`, `avatarsFromFeatures`, `createWcsProvider`, `createWmsProvider`, `decodeGeoTiff`, `OgcError` |
 | `alebrije/maplibre` | `createAvatarLayer`, `createAvatarSet` |
 
 ## Demo

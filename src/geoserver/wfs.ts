@@ -1,10 +1,9 @@
-export class WfsError extends Error {
-    readonly status: number | null;
+import { OgcError, exceptionText, withQuery } from './errors.js';
 
+export class WfsError extends OgcError {
     constructor(message: string, status: number | null = null) {
-        super(message);
+        super(message, status);
         this.name = 'WfsError';
-        this.status = status;
     }
 }
 
@@ -39,12 +38,6 @@ export interface FetchFeaturesOptions extends GetFeatureOptions {
     signal?: AbortSignal;
 }
 
-const withQuery = (url: string, params: Record<string, string>): string => {
-    const target = new URL(url, typeof location === 'undefined' ? 'http://localhost/' : location.href);
-    Object.entries(params).forEach(([key, value]) => target.searchParams.set(key, value));
-    return /^[a-z]+:\/\//i.test(url) ? target.toString() : `${target.pathname}${target.search}`;
-};
-
 export const buildGetFeatureUrl = (options: GetFeatureOptions): string => {
     const version = options.version ?? '2.0.0';
     const params: Record<string, string> = {
@@ -64,13 +57,7 @@ export const buildGetFeatureUrl = (options: GetFeatureOptions): string => {
     }
     if (options.count !== undefined) params[version === '2.0.0' ? 'count' : 'maxFeatures'] = String(options.count);
     if (options.propertyNames?.length) params['propertyName'] = options.propertyNames.join(',');
-    return withQuery(options.url, { ...params, ...options.params });
-};
-
-const exceptionText = (body: string): string | null => {
-    const match = /<(?:ows:)?ExceptionText>([\s\S]*?)<\/(?:ows:)?ExceptionText>/.exec(body)
-        ?? /<ServiceException[^>]*>([\s\S]*?)<\/ServiceException>/.exec(body);
-    return match?.[1]?.trim() ?? null;
+    return withQuery(options.url, Object.entries({ ...params, ...options.params }));
 };
 
 export const fetchFeatures = async (options: FetchFeaturesOptions): Promise<GeoJsonCollection> => {

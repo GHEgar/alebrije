@@ -1,10 +1,11 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Map as MapLibreMap } from 'maplibre-gl';
-import { createAvatarLayer } from 'alebrije/maplibre';
+import { createAvatarLayer, type AvatarLayer } from 'alebrije/maplibre';
 import type { Mode } from './mode';
+import { caminarWcs, caminarWms } from './caminar';
 import { personas } from './personas';
 
-const MODES: Mode[] = [personas];
+const MODES: Mode[] = [personas, caminarWcs, caminarWms];
 
 const map = new MapLibreMap({
     container: 'map',
@@ -28,18 +29,35 @@ const map = new MapLibreMap({
     },
 });
 
-const layer = createAvatarLayer({ id: 'avatars', origin: [-103.3496, 20.6767], smoothing: 0.35 });
 const tabs = document.getElementById('tabs') as HTMLElement;
 const hint = document.getElementById('hint') as HTMLElement;
 const status = document.getElementById('status') as HTMLElement;
 let stop: (() => void) | null = null;
+let layers: AvatarLayer[] = [];
+
+const clear = (): void => {
+    stop?.();
+    stop = null;
+    layers.forEach((layer) => map.removeLayer(layer.id));
+    layers = [];
+};
 
 const select = (mode: Mode): void => {
-    stop?.();
+    clear();
     tabs.querySelectorAll('button').forEach((button) => button.setAttribute('aria-pressed', String(button.textContent === mode.title)));
     hint.textContent = mode.hint;
     status.textContent = '';
-    stop = mode.start({ map, layer, status: (text) => { status.textContent = text; } });
+    stop = mode.start({
+        map,
+        status: (text) => { status.textContent = text; },
+        createLayer: (options) => {
+            const layer = createAvatarLayer({ id: `avatars-${layers.length}`, ...options });
+            map.addLayer(layer);
+            layers.push(layer);
+            Object.assign(window, { layer });
+            return layer;
+        },
+    });
 };
 
 MODES.forEach((mode) => {
@@ -52,9 +70,8 @@ MODES.forEach((mode) => {
 });
 
 map.on('load', () => {
-    map.addLayer(layer);
     const initial = MODES.find((mode) => location.hash === `#${MODES.indexOf(mode)}`) ?? MODES[0];
     if (initial) select(initial);
 });
 
-Object.assign(window, { map, layer });
+Object.assign(window, { map });

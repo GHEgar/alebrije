@@ -7,6 +7,24 @@ apega a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [No publicado]
 
+## [0.4.0] - 2026-10-13
+
+### Agregado
+
+- Elevación en `alebrije/geo`: la interfaz `ElevationProvider` de teodolito (`getElevations`),
+  `ElevationGrid` con muestreo bilineal y `noData`, `createGridProvider` con caché de rejillas por
+  extensión, `createGround` para muestrear el suelo de forma síncrona alrededor de un punto y
+  `createWalker`: rumbo, velocidad, correr, giro, pendiente máxima y `timeScale` del clip según la
+  velocidad (negativo al caminar hacia atrás).
+- DEM de GeoServer en `alebrije/geoserver`: `createWcsProvider` (WCS 2.0.1 `GetCoverage` en GeoTIFF sin
+  comprimir, ejes de `subset` y CRS configurables, `decode` sustituible), `decodeGeoTiff` (un canal,
+  franjas o mosaicos, enteros o flotantes, ambos órdenes de bytes, georreferencia y `GDAL_NODATA`) y
+  `createWmsProvider` (WMS 1.3.0 en BIL16, BIL32 o PNG terrain-RGB `mapbox`/`terrarium`).
+- `OgcError` para las excepciones de WCS y WMS; `WfsError` deriva de ella.
+- `baseAltitude` en el marco local y en la capa, para dibujar alturas absolutas sobre el plano del mapa.
+- Demo: caminar con el teclado sobre un relieve servido por WCS o por WMS BIL, con cámara en tercera
+  persona.
+
 ## [0.3.0] - 2026-10-13
 
 ### Agregado
