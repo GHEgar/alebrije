@@ -79,16 +79,15 @@ apega a [Versionado Semántico](https://semver.org/lang/es/).
 
 ### Cambiado
 
-- Proyecto propio fuera del IIEG: de app Vite a librería headless en TypeScript; el creador pasa a
-  `demo/`.
+- De app Vite a librería headless en TypeScript; el creador pasa a `demo/`.
 - Los clips se llaman `walk` e `idle` (antes `caminar` y `reposo`).
 - `normalizeAvatar` se llama `parseAvatar`; `HEAD_SHAPES` y `HAIR_STYLES` son listas de valores y las
   etiquetas quedan del lado del consumidor.
-- Colores por defecto de la ropa y un tono de la paleta, sin la paleta del IIEG.
+- Colores por defecto de la ropa y un tono de la paleta neutros.
 
 ### Eliminado
 
-- Fuente Garet, colores e ícono del IIEG, Tailwind y el escenario 3D del paquete: luces, piso,
+- Fuente Garet, colores e ícono propios de la app, Tailwind y el escenario 3D del paquete: luces, piso,
   cámara y renderer son del consumidor.
 
 ## [0.1.0] - 2026-10-05
