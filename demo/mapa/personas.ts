@@ -5,20 +5,20 @@ import type { Mode } from './mode';
 const REFRESH = 1000;
 
 export const personas: Mode = {
-    title: 'Personas (WFS)',
-    hint: 'Cada punto de la capa demo:personas es un avatar con su definición, rumbo y estado.',
+    title: 'People (WFS)',
+    hint: 'Each point of the demo:people layer is an avatar with its definition, heading and state.',
     start({ createLayer, map, status }) {
         const layer = createLayer({ origin: [-103.3496, 20.6767], smoothing: 0.35 });
         let alive = true;
         const controller = new AbortController();
         const load = async (): Promise<void> => {
             try {
-                const collection = await fetchFeatures({ url: '/geoserver/ows', typeName: 'demo:personas', signal: controller.signal });
+                const collection = await fetchFeatures({ url: '/geoserver/ows', typeName: 'demo:people', signal: controller.signal });
                 if (!alive) return;
                 layer.setAvatars(avatarsFromFeatures(collection, {
-                    definition: 'avatar', heading: 'rumbo', clip: 'estado', fallbackDefinition: DEFAULT_AVATAR,
+                    definition: 'avatar', heading: 'heading', clip: 'state', fallbackDefinition: DEFAULT_AVATAR,
                 }));
-                status(`${collection.features.length} personas · GetFeature cada ${REFRESH / 1000} s`);
+                status(`${collection.features.length} people · GetFeature every ${REFRESH / 1000} s`);
             } catch (error) {
                 if (alive) status(`Error: ${(error as Error).message}`);
             }

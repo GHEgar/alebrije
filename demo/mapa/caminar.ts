@@ -13,7 +13,7 @@ const DEFINITION = { ...DEFAULT_AVATAR, accessories: { ...DEFAULT_AVATAR.accesso
 
 const caminar = (title: string, label: string, provider: () => ElevationProvider): Mode => ({
     title,
-    hint: `Camina con WASD o flechas, Shift para correr. La altura sale de un DEM por ${label}.`,
+    hint: `Walk with WASD or the arrow keys, Shift to run. Elevation comes from a DEM via ${label}.`,
     start({ createLayer, map, status }) {
         const layer = createLayer({ origin: START, baseAltitude: BASE });
         const ground = createGround(provider(), { radius: 160, spacing: 3 });
@@ -40,7 +40,7 @@ const caminar = (title: string, label: string, provider: () => ElevationProvider
                 turn: axis(['KeyD', 'ArrowRight'], ['KeyA', 'ArrowLeft']),
                 run: keys.has('ShiftLeft') || keys.has('ShiftRight'),
             });
-            layer.setAvatars([walker.avatar('yo', DEFINITION)]);
+            layer.setAvatars([walker.avatar('me', DEFINITION)]);
             const grid = ground.grid();
             const frame = layer.frame();
             if (grid && frame && grid !== shown) {
@@ -53,7 +53,7 @@ const caminar = (title: string, label: string, provider: () => ElevationProvider
             const eye = destination(state.position, (state.heading + 180) % 360, 7);
             const local = state.altitude - BASE;
             map.jumpTo(map.calculateCameraOptionsFromTo(new LngLat(...eye), local + 3.2, new LngLat(...state.position), local + 1.2));
-            status(`altura ${state.altitude.toFixed(1)} m · rumbo ${state.heading.toFixed(0)}° · ${state.speed ? `${Math.abs(state.speed).toFixed(1)} m/s` : 'quieto'}`);
+            status(`altitude ${state.altitude.toFixed(1)} m · heading ${state.heading.toFixed(0)}° · ${state.speed ? `${Math.abs(state.speed).toFixed(1)} m/s` : 'still'}`);
             frameId = requestAnimationFrame(tick);
         };
 
@@ -73,10 +73,10 @@ const caminar = (title: string, label: string, provider: () => ElevationProvider
     },
 });
 
-export const caminarWcs = caminar('Caminar (WCS)', 'WCS 2.0 GetCoverage en GeoTIFF', () => createWcsProvider({
-    url: '/geoserver/ows', coverageId: 'demo__terreno', resolution: 3,
+export const caminarWcs = caminar('Walk (WCS)', 'WCS 2.0 GetCoverage as GeoTIFF', () => createWcsProvider({
+    url: '/geoserver/ows', coverageId: 'demo__terrain', resolution: 3,
 }));
 
-export const caminarWms = caminar('Caminar (WMS BIL)', 'WMS GetMap en BIL16', () => createWmsProvider({
-    url: '/geoserver/ows', layers: 'demo:terreno', format: 'bil16', resolution: 3,
+export const caminarWms = caminar('Walk (WMS BIL)', 'WMS GetMap as BIL16', () => createWmsProvider({
+    url: '/geoserver/ows', layers: 'demo:terrain', format: 'bil16', resolution: 3,
 }));

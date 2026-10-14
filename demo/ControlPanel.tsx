@@ -4,13 +4,13 @@ import {
 } from 'alebrije';
 import { ChipGroup, ColorField, RangeField, Section } from './fields';
 
-const SHAPE_LABELS: Record<HeadShape, string> = { round: 'Redonda', oval: 'Ovalada', square: 'Cuadrada' };
-const HAIR_LABELS: Record<HairStyle, string> = { none: 'Sin cabello', short: 'Corto', long: 'Largo', bun: 'Chongo' };
+const SHAPE_LABELS: Record<HeadShape, string> = { round: 'Round', oval: 'Oval', square: 'Square' };
+const HAIR_LABELS: Record<HairStyle, string> = { none: 'No hair', short: 'Short', long: 'Long', bun: 'Bun' };
 
 const buildLabel = (value: number): string => {
-    if (value < 0.34) return 'Delgada';
-    if (value < 0.67) return 'Media';
-    return 'Robusta';
+    if (value < 0.34) return 'Slim';
+    if (value < 0.67) return 'Medium';
+    return 'Sturdy';
 };
 
 type Groups = Omit<AvatarDefinition, 'version'>;
@@ -28,37 +28,37 @@ export function ControlPanel({ avatar, onChange }: ControlPanelProps) {
     const { body, head, hair, clothes, accessories } = avatar;
     return (
         <div className="controls">
-            <Section title="Cuerpo">
+            <Section title="Body">
                 <RangeField
-                    label="Estatura"
-                    hint="En metros: el avatar se exporta a escala real."
+                    label="Height"
+                    hint="In meters: the avatar is exported at real scale."
                     range={HEIGHT_RANGE}
                     value={body.height}
                     format={(value) => `${value.toFixed(2)} m`}
                     onChange={set('body', 'height')}
                 />
-                <RangeField label="Complexión" range={BUILD_RANGE} value={body.build} format={buildLabel} onChange={set('body', 'build')} />
-                <ColorField label="Tono de piel" swatches={SKIN_TONES} value={body.skinTone} onChange={set('body', 'skinTone')} />
+                <RangeField label="Build" range={BUILD_RANGE} value={body.build} format={buildLabel} onChange={set('body', 'build')} />
+                <ColorField label="Skin tone" swatches={SKIN_TONES} value={body.skinTone} onChange={set('body', 'skinTone')} />
             </Section>
-            <Section title="Cabeza">
-                <ChipGroup label="Forma" options={HEAD_SHAPES} labels={SHAPE_LABELS} value={head.shape} onChange={set('head', 'shape')} />
-                <ChipGroup label="Peinado" options={HAIR_STYLES} labels={HAIR_LABELS} value={hair.style} onChange={set('hair', 'style')} />
+            <Section title="Head">
+                <ChipGroup label="Shape" options={HEAD_SHAPES} labels={SHAPE_LABELS} value={head.shape} onChange={set('head', 'shape')} />
+                <ChipGroup label="Hairstyle" options={HAIR_STYLES} labels={HAIR_LABELS} value={hair.style} onChange={set('hair', 'style')} />
                 {hair.style !== 'none' && (
-                    <ColorField label="Color de cabello" swatches={HAIR_COLORS} value={hair.color} onChange={set('hair', 'color')} />
+                    <ColorField label="Hair color" swatches={HAIR_COLORS} value={hair.color} onChange={set('hair', 'color')} />
                 )}
             </Section>
-            <Section title="Ropa">
-                <ColorField label="Playera" swatches={CLOTH_COLORS} value={clothes.shirt} onChange={set('clothes', 'shirt')} />
-                <ColorField label="Pantalón" swatches={CLOTH_COLORS} value={clothes.pants} onChange={set('clothes', 'pants')} />
-                <ColorField label="Zapatos" swatches={CLOTH_COLORS} value={clothes.shoes} onChange={set('clothes', 'shoes')} />
+            <Section title="Clothes">
+                <ColorField label="Shirt" swatches={CLOTH_COLORS} value={clothes.shirt} onChange={set('clothes', 'shirt')} />
+                <ColorField label="Pants" swatches={CLOTH_COLORS} value={clothes.pants} onChange={set('clothes', 'pants')} />
+                <ColorField label="Shoes" swatches={CLOTH_COLORS} value={clothes.shoes} onChange={set('clothes', 'shoes')} />
             </Section>
-            <Section title="Accesorios">
-                <div role="group" aria-label="Complementos" className="chips">
-                    <button type="button" className="chip" aria-pressed={accessories.glasses} onClick={() => set('accessories', 'glasses')(!accessories.glasses)}>Lentes</button>
-                    <button type="button" className="chip" aria-pressed={accessories.cap} onClick={() => set('accessories', 'cap')(!accessories.cap)}>Gorra</button>
+            <Section title="Accessories">
+                <div role="group" aria-label="Extras" className="chips">
+                    <button type="button" className="chip" aria-pressed={accessories.glasses} onClick={() => set('accessories', 'glasses')(!accessories.glasses)}>Glasses</button>
+                    <button type="button" className="chip" aria-pressed={accessories.cap} onClick={() => set('accessories', 'cap')(!accessories.cap)}>Cap</button>
                 </div>
                 {accessories.cap && (
-                    <ColorField label="Color de gorra" swatches={CLOTH_COLORS} value={accessories.capColor} onChange={set('accessories', 'capColor')} />
+                    <ColorField label="Cap color" swatches={CLOTH_COLORS} value={accessories.capColor} onChange={set('accessories', 'capColor')} />
                 )}
             </Section>
         </div>

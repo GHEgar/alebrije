@@ -10,6 +10,7 @@ apega a [Versionado Semántico](https://semver.org/lang/es/).
 ### Cambiado
 
 - El lint usa `@ghegar/eslint-config` (presets `base`, `react` y `ts`) en lugar de una config propia.
+- El demo está en inglés.
 
 ## [0.5.0] - 2026-10-13
 

@@ -48,13 +48,13 @@ export const personasCollection = (now: number): unknown => {
             const ahead = positionAt(persona, seconds + 0.5);
             return {
                 type: 'Feature',
-                id: `personas.${persona.id}`,
+                id: `people.${persona.id}`,
                 geometry: { type: 'Point', coordinates: [...here] },
                 properties: {
-                    nombre: `Persona ${persona.id + 1}`,
+                    name: `Person ${persona.id + 1}`,
                     avatar: persona.avatar,
-                    rumbo: persona.speed ? bearing(here, ahead) : 200,
-                    estado: persona.speed ? 'walk' : 'idle',
+                    heading: persona.speed ? bearing(here, ahead) : 200,
+                    state: persona.speed ? 'walk' : 'idle',
                 },
             };
         }),

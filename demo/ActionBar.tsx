@@ -30,7 +30,7 @@ export function ActionBar({ avatar, onRandom, onImport }: ActionBarProps) {
             download(await exportAvatarGlb(avatar), `${FILE_NAME}.glb`, 'model/gltf-binary');
         } catch (cause) {
             console.error(cause);
-            setError('No se pudo generar el archivo .glb.');
+            setError('Could not generate the .glb file.');
         } finally {
             setExporting(false);
         }
@@ -44,18 +44,18 @@ export function ActionBar({ avatar, onRandom, onImport }: ActionBarProps) {
         try {
             onImport(parseAvatar(JSON.parse(await selected.text())));
         } catch {
-            setError('El archivo no es un JSON de avatar válido.');
+            setError('The file is not a valid avatar JSON.');
         }
     };
 
     return (
         <div className="actions">
             <div className="buttons">
-                <button type="button" className="button" onClick={onRandom}>Aleatorio</button>
-                <button type="button" className="button" onClick={() => file.current?.click()}>Importar JSON</button>
-                <button type="button" className="button" onClick={() => download(`${JSON.stringify(avatar, null, 4)}\n`, `${FILE_NAME}.json`, 'application/json')}>Exportar JSON</button>
+                <button type="button" className="button" onClick={onRandom}>Random</button>
+                <button type="button" className="button" onClick={() => file.current?.click()}>Import JSON</button>
+                <button type="button" className="button" onClick={() => download(`${JSON.stringify(avatar, null, 4)}\n`, `${FILE_NAME}.json`, 'application/json')}>Export JSON</button>
                 <button type="button" className="button primary" disabled={exporting} aria-busy={exporting} onClick={downloadGlb}>
-                    {exporting ? 'Generando…' : 'Descargar .glb'}
+                    {exporting ? 'Generating…' : 'Download .glb'}
                 </button>
                 <input ref={file} type="file" accept="application/json,.json" onChange={importJson} hidden />
             </div>

@@ -90,8 +90,8 @@ export function ColorField({ label, swatches, value, onChange }: ColorFieldProps
                         onClick={() => onChange(swatch)}
                     />
                 ))}
-                <label htmlFor={id} className="swatch custom" title="Otro color">
-                    <span className="sr-only">Otro color para {label.toLowerCase()}</span>
+                <label htmlFor={id} className="swatch custom" title="Custom color">
+                    <span className="sr-only">Custom {label.toLowerCase()}</span>
                     <input id={id} type="color" value={value} onChange={(event) => onChange(event.target.value.toUpperCase())} />
                 </label>
             </div>

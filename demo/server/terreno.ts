@@ -51,7 +51,7 @@ const parseSubsets = (subsets: string[]): Record<string, [number, number]> => {
 
 export const wcs: Handler = (query: Query, res) => {
     if (query('request') !== 'GetCoverage') return false;
-    if (query('coverageId') !== 'demo__terreno') return exception(res, `Could not find coverage ${query('coverageId') ?? ''}`);
+    if (query('coverageId') !== 'demo__terrain') return exception(res, `Could not find coverage ${query('coverageId') ?? ''}`);
     const subsets = parseSubsets(query.all('subset'));
     const lon = subsets['Long'];
     const lat = subsets['Lat'];
@@ -66,7 +66,7 @@ export const wcs: Handler = (query: Query, res) => {
 };
 
 export const wmsBil: Handler = (query, res) => {
-    if (query('request') !== 'GetMap' || query('layers') !== 'demo:terreno') return false;
+    if (query('request') !== 'GetMap' || query('layers') !== 'demo:terrain') return false;
     const [south, west, north, east] = (query('bbox') ?? '').split(',').map(Number);
     const width = Number(query('width'));
     const height = Number(query('height'));

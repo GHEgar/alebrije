@@ -25,11 +25,11 @@ export const sendJson = (res: ServerResponse, body: unknown): void => {
 const wfs: Handler = (query, res) => {
     if (query('request') !== 'GetFeature') return false;
     const type = query('typeNames') ?? query('typeName');
-    if (type === 'demo:personas') {
+    if (type === 'demo:people') {
         sendJson(res, personasCollection(Date.now()));
         return true;
     }
-    if (type === 'demo:rutas') {
+    if (type === 'demo:routes') {
         sendJson(res, rutasCollection());
         return true;
     }

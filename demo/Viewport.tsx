@@ -40,8 +40,8 @@ export function Viewport({ avatar, walking, onToggleWalk }: ViewportProps) {
         <div className="viewport">
             <div ref={container} className="canvas" />
             <div className="overlay">
-                <button type="button" className="chip" aria-pressed={walking} onClick={onToggleWalk}>Caminar</button>
-                <small>Arrastra para girar, rueda para acercar.</small>
+                <button type="button" className="chip" aria-pressed={walking} onClick={onToggleWalk}>Walk</button>
+                <small>Drag to orbit, scroll to zoom.</small>
             </div>
         </div>
     );
