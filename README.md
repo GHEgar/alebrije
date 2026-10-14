@@ -8,6 +8,8 @@ Headless low-poly avatars for three.js: skinned humanoid, walk and idle clips, g
 
 ![A low-poly avatar idling, walking, orbiting and changing its look in the demo editor](.github/assets/demo.gif)
 
+**[Live demo](https://ghegar.github.io/alebrije/)**
+
 alebrije owns the avatar: a small JSON definition — height, build, skin tone, head shape, hair,
 clothes, glasses and cap — becomes a skinned humanoid with `walk` and `idle` clips, ready for an
 `AnimationMixer` or to download as binary glTF. You own the renderer, scene, lights, camera and every
