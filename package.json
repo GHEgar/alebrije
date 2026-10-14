@@ -1,7 +1,7 @@
 {
     "name": "alebrije",
     "version": "0.5.0",
-    "description": "Headless low-poly avatar builder for three.js: parametric humanoid with skeleton, walk and idle clips, glTF export, MapLibre layer and GeoServer sources (WFS, WCS, WMS).",
+    "description": "Headless low-poly avatars for three.js: skinned humanoid, walk and idle clips, glTF export, MapLibre and GeoServer.",
     "license": "AGPL-3.0-only",
     "author": "Edgar Villarreal",
     "type": "module",
