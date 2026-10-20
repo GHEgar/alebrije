@@ -135,6 +135,31 @@ The layer is a MapLibre custom layer (v4 and v5+) that never imports `maplibre-g
 `clip` — in a local east-north-up frame around a fixed origin, which is accurate for areas of a few tens
 of kilometres. Avatars whose definition did not change are moved, not rebuilt.
 
+| Option | Default | |
+|---|---|---|
+| `origin`, `baseAltitude` | first avatar, `0` | Origin of the local frame. `baseAltitude` only re-centres local heights; altitudes stay absolute metres. |
+| `smoothing` | `0` | Seconds to ease towards a new position and heading. |
+| `scale` | `1` | Size multiplier for every avatar. |
+| `idleFrameRate` | `15` | Frames per second while every avatar rests in `idle`. `0` stops repainting, `Infinity` repaints every frame. |
+| `terrain` | `false` | Avatars without `altitude` stand on `map.queryTerrainElevation`. |
+| `lights` | `true` | Hemisphere and sun lights in the layer scene. |
+
+The layer only asks MapLibre for a new frame on every frame while something moves: a `walk` clip, a
+cross-fade, or an avatar still easing towards its target. At rest it falls back to `idleFrameRate`, so
+`idle` keeps breathing without redrawing the whole map at 60 fps. `setAvatars` always requests a frame;
+call `layer.repaint()` after driving a player directly through `layer.avatar(id)`.
+
+With `terrain: true`, each avatar without an explicit `altitude` is placed on the terrain every frame,
+so it follows tiles as they load and changes of exaggeration. `queryTerrainElevation` already includes
+the exaggeration; without terrain it returns `null` and the avatar stands at `0`. An explicit `altitude`
+always wins.
+
+```ts
+const layer = createAvatarLayer({ id: 'players', smoothing: 0.12, terrain: true });
+map.setTerrain({ source: 'dem', exaggeration: 1.5 });
+layer.setAvatars([{ id: 'p1', definition, position: [-103.35, 20.67], heading: 90, clip: 'walk' }]);
+```
+
 ### Walking on a DEM
 
 ```ts

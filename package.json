@@ -1,6 +1,6 @@
 {
     "name": "alebrije",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "description": "Headless low-poly avatars for three.js: skinned humanoid, walk and idle clips, glTF export, MapLibre and GeoServer.",
     "keywords": [
         "threejs",
@@ -19,7 +19,7 @@
     "type": "module",
     "sideEffects": false,
     "engines": {
-        "node": ">=26"
+        "node": ">=24"
     },
     "files": [
         "dist"

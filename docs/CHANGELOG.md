@@ -7,9 +7,28 @@ apega a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [No publicado]
 
+## [0.6.0] - 2026-10-20
+
+### Agregado
+
+- Opción `idleFrameRate` de `createAvatarLayer`: cuadros por segundo con los que la capa repinta
+  cuando todos los avatars reposan en `idle` (15 por omisión para que sigan respirando; `0` deja de
+  repintar e `Infinity` repinta cada cuadro como antes).
+- Opción `terrain` de `createAvatarLayer`, apagada por omisión: los avatars sin `altitude` toman la
+  altura de `map.queryTerrainElevation`, que ya trae la exageración del terreno, y la siguen en cada
+  cuadro mientras cargan teselas o cambia la exageración.
+- `repaint()` en la capa, para pedir un cuadro tras tocar un reproductor con `avatar(id)`.
+- `fading()` en `AvatarPlayer`: indica si sigue en curso un fundido entre clips.
+- `AvatarSet.reground(frame, ground)`, el tipo `Ground` y el tercer argumento opcional `ground` de
+  `AvatarSet.set`.
+
 ### Cambiado
 
-- El lint usa `@ghegar/eslint-config` (presets `base`, `react` y `ts`) en lugar de una config propia.
+- La capa de MapLibre solo pide repintado continuo mientras algún avatar camina, cruza clips o
+  todavía se acerca a su posición o rumbo; `setAvatars` siempre pide un cuadro.
+- `AvatarSet.update` devuelve si queda animación o movimiento pendiente.
+- `engines.node` baja a `>=24`.
+- El lint usa `@npmegar/eslint-config` (presets `base`, `react` y `ts`) en lugar de una config propia.
 - El demo está en inglés.
 
 ## [0.5.0] - 2026-10-13

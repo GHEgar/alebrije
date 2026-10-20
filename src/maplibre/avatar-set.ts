@@ -3,9 +3,14 @@ import { IDLE_CLIP } from '../core/animations.js';
 import { createAvatarPlayer, type AvatarPlayer } from '../core/player.js';
 import { parseAvatar } from '../core/schema.js';
 import type { LocalFrame } from '../geo/frame.js';
+import type { LonLat } from '../geo/lonlat.js';
 import type { AvatarState } from '../geo/state.js';
 
 const RAD = Math.PI / 180;
+const REST_DISTANCE = 1e-3;
+const REST_TURN = 1e-4;
+
+export type Ground = (position: LonLat) => number | null | undefined;
 
 interface Entry {
     key: string;
@@ -13,6 +18,8 @@ interface Entry {
     player: AvatarPlayer;
     target: Vector3;
     heading: number;
+    position: LonLat;
+    altitude: number | undefined;
 }
 
 export interface AvatarSetOptions {
@@ -22,10 +29,11 @@ export interface AvatarSetOptions {
 
 export interface AvatarSet {
     readonly group: Group;
-    set(states: readonly AvatarState[], frame: LocalFrame): void;
+    set(states: readonly AvatarState[], frame: LocalFrame, ground?: Ground): void;
+    reground(frame: LocalFrame, ground: Ground): boolean;
     get(id: string): AvatarPlayer | undefined;
     ids(): string[];
-    update(delta: number): void;
+    update(delta: number): boolean;
     dispose(): void;
 }
 
@@ -52,20 +60,28 @@ export const createAvatarSet = ({ smoothing = 0, scale = 1 }: AvatarSetOptions =
         entries.delete(id);
     };
 
-    const place = (entry: Entry, state: AvatarState, frame: LocalFrame, fresh: boolean): void => {
-        entry.target.set(...frame.toLocal(state.position, state.altitude ?? 0));
+    const aim = (entry: Entry, frame: LocalFrame, ground: Ground | undefined): void => {
+        entry.target.set(...frame.toLocal(entry.position, entry.altitude ?? ground?.(entry.position) ?? 0));
+    };
+
+    const snap = (entry: Entry): void => {
+        entry.holder.position.copy(entry.target);
+        entry.holder.rotation.z = entry.heading;
+    };
+
+    const place = (entry: Entry, state: AvatarState, frame: LocalFrame, fresh: boolean, ground: Ground | undefined): void => {
+        entry.position = state.position;
+        entry.altitude = state.altitude;
+        aim(entry, frame, ground);
         entry.heading = -state.heading * RAD;
-        if (fresh || smoothing <= 0) {
-            entry.holder.position.copy(entry.target);
-            entry.holder.rotation.z = entry.heading;
-        }
+        if (fresh || smoothing <= 0) snap(entry);
         entry.player.play(state.clip ?? IDLE_CLIP);
         entry.player.setTimeScale(state.timeScale ?? 1);
     };
 
     return {
         group,
-        set(states, frame) {
+        set(states, frame, ground) {
             const seen = new Set<string>();
             states.forEach((state) => {
                 seen.add(state.id);
@@ -78,26 +94,43 @@ export const createAvatarSet = ({ smoothing = 0, scale = 1 }: AvatarSetOptions =
                 const fresh = !entry;
                 if (!entry) {
                     const player = createAvatarPlayer(state.definition, { clip: state.clip ?? IDLE_CLIP });
-                    entry = { key, holder: zUp(player), player, target: new Vector3(), heading: 0 };
+                    entry = { key, holder: zUp(player), player, target: new Vector3(), heading: 0, position: state.position, altitude: undefined };
                     entry.holder.name = state.id;
                     entry.holder.scale.setScalar(scale);
                     group.add(entry.holder);
                     entries.set(state.id, entry);
                 }
-                place(entry, state, frame, fresh);
+                place(entry, state, frame, fresh, ground);
             });
             [...entries.keys()].filter((id) => !seen.has(id)).forEach(remove);
+        },
+        reground(frame, ground) {
+            let moved = false;
+            entries.forEach((entry) => {
+                if (entry.altitude !== undefined) return;
+                const before = entry.target.z;
+                aim(entry, frame, ground);
+                if (Math.abs(entry.target.z - before) < REST_DISTANCE) return;
+                moved = true;
+                if (smoothing <= 0) snap(entry);
+            });
+            return moved;
         },
         get: (id) => entries.get(id)?.player,
         ids: () => [...entries.keys()],
         update(delta) {
             const t = smoothing > 0 ? 1 - Math.exp(-delta / smoothing) : 1;
+            let active = false;
             entries.forEach((entry) => {
                 entry.holder.position.lerp(entry.target, t);
                 const turn = Math.atan2(Math.sin(entry.heading - entry.holder.rotation.z), Math.cos(entry.heading - entry.holder.rotation.z));
                 entry.holder.rotation.z += turn * t;
+                const resting = entry.holder.position.distanceTo(entry.target) < REST_DISTANCE && Math.abs(turn * (1 - t)) < REST_TURN;
+                if (resting) snap(entry);
                 entry.player.update(delta);
+                if (!resting || entry.player.clip() !== IDLE_CLIP || entry.player.fading()) active = true;
             });
+            return active;
         },
         dispose() {
             [...entries.keys()].forEach(remove);

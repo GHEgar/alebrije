@@ -5,11 +5,12 @@ import { createLocalFrame, type LocalFrame } from '../geo/frame.js';
 import type { LonLat } from '../geo/lonlat.js';
 import type { AvatarState } from '../geo/state.js';
 import type { AvatarPlayer } from '../core/player.js';
-import { createAvatarSet } from './avatar-set.js';
+import { createAvatarSet, type Ground } from './avatar-set.js';
 
 export interface MapLike {
     getCanvas(): HTMLCanvasElement;
     triggerRepaint(): void;
+    queryTerrainElevation?(lngLat: [number, number]): number | null;
 }
 
 export type RenderArgs = ArrayLike<number> | { defaultProjectionData: { mainMatrix: ArrayLike<number> } };
@@ -21,6 +22,8 @@ export interface AvatarLayerOptions {
     lights?: boolean;
     smoothing?: number;
     scale?: number;
+    idleFrameRate?: number;
+    terrain?: boolean;
     now?: () => number;
 }
 
@@ -33,11 +36,13 @@ export interface AvatarLayer {
     render(gl: WebGLRenderingContext | WebGL2RenderingContext, args: RenderArgs): void;
     onRemove(): void;
     setAvatars(states: readonly AvatarState[]): void;
+    repaint(): void;
     avatar(id: string): AvatarPlayer | undefined;
     frame(): LocalFrame | null;
 }
 
 const MAX_DELTA = 0.1;
+const IDLE_FRAME_RATE = 15;
 
 export const mainMatrixOf = (args: RenderArgs): ArrayLike<number> => (
     'defaultProjectionData' in args ? args.defaultProjectionData.mainMatrix : args
@@ -68,6 +73,35 @@ export const createAvatarLayer = (options: AvatarLayerOptions): AvatarLayer => {
     let map: MapLike | null = null;
     let renderer: WebGLRenderer | null = null;
     let previous: number | null = null;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const idleFrameRate = options.idleFrameRate ?? IDLE_FRAME_RATE;
+    const ground: Ground | undefined = options.terrain
+        ? (position) => map?.queryTerrainElevation?.([position[0], position[1]])
+        : undefined;
+
+    const wait = (): void => {
+        if (timer === null) return;
+        clearTimeout(timer);
+        timer = null;
+    };
+
+    const repaint = (): void => {
+        wait();
+        map?.triggerRepaint();
+    };
+
+    const schedule = (active: boolean): void => {
+        if (!map || !avatars.ids().length) return;
+        if (active || idleFrameRate === Infinity) {
+            repaint();
+            return;
+        }
+        if (idleFrameRate <= 0 || timer !== null) return;
+        timer = setTimeout(() => {
+            timer = null;
+            map?.triggerRepaint();
+        }, 1000 / idleFrameRate);
+    };
 
     return {
         id: options.id,
@@ -84,13 +118,15 @@ export const createAvatarLayer = (options: AvatarLayerOptions): AvatarLayer => {
             const delta = previous === null ? 0 : Math.min((time - previous) / 1000, MAX_DELTA);
             previous = time;
             if (!renderer || !frame) return;
-            avatars.update(delta);
+            const lifted = ground ? avatars.reground(frame, ground) : false;
+            const active = avatars.update(delta) || lifted;
             camera.projectionMatrix = localToClip(mainMatrixOf(args), frame);
             renderer.resetState();
             renderer.render(scene, camera);
-            if (avatars.ids().length) map?.triggerRepaint();
+            schedule(active);
         },
         onRemove() {
+            wait();
             avatars.dispose();
             renderer?.dispose();
             renderer = null;
@@ -100,9 +136,10 @@ export const createAvatarLayer = (options: AvatarLayerOptions): AvatarLayer => {
         setAvatars(states) {
             const first = states[0];
             if (!frame && first) frame = createLocalFrame(first.position, options.baseAltitude);
-            if (frame) avatars.set(states, frame);
-            map?.triggerRepaint();
+            if (frame) avatars.set(states, frame, ground);
+            repaint();
         },
+        repaint,
         avatar: (id) => avatars.get(id),
         frame: () => frame,
     };
